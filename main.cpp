@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -7,33 +6,31 @@
 #include <time.h>
 
 using namespace std;
-using std::cout;
-using std::cin;
-using std::endl;
 
-
-// Fonction du gap afinne
+// calcul de la penalite d'ecart
 int gap_affinity (int gap, int gap_ext, int& length) {
    int gap_aff = gap + (gap_ext * length);
-   
+
    return gap_aff;
 }
 
 // Obtention et tracage du score maximal
 int score_max(int up, int diag, int left, char*ptr, int& length) {
    int max = 0;
-   
+
    if(diag >= up && diag >= left ) {
-          max = diag;
+
+         max = diag;
           *ptr = '\\';
-          length++ // ajout de 1 gap-length        
-        } 
+          length++; // ajout de 1 gap-length
+
+   }
     else {
       max = left;
       *ptr = '-';
       length++; // ajout de 1 gap-length
     }
-    
+
     return max;
 }
 
@@ -41,16 +38,16 @@ int score_max(int up, int diag, int left, char*ptr, int& length) {
 void init(int**M, char**M_tb, int A_n, int B_n, int gap, int gap_ext) {
     M[0][0] = 0;
     M_tb[0][0] = 'n';
-    
+
     int i = 0;
     int j = 0;
-    
+
     for(j = 1; j <= A_n; j++){
         M[0][j] = - (gap + (gap_ext*(j - 1))); // application manuelle du gap affine
         M_tb[0][j] = '-';
    }
    for(i = 1; i <= B_n; i++){
-      M[i][0] = - (gap + (gap_ext*(i - 1))); // application manuelle du gap affine 
+      M[i][0] = - (gap + (gap_ext*(i - 1))); // application manuelle du gap affine
       M_tb[i][0] = '|';
    }
 }
@@ -62,45 +59,45 @@ int alignement (int** M, char** M_tb, string A, string B, string& A_al, string& 
     char ptr, nuc;
     int i = 0, j = 0;
     int length = 0; // gap length initiale
-    
+
     // creation de la matrice de scrore de substitution
-    const int = s[4][4] = {{ a, b, c, c},
+    const int  s[4][4] = {{ a, b, c, c},
                            { b, a, c, c},
                            { c, c, a, b},
                            { c, c, b, a}};
      for(i =1; i <= B_n; i++){
          for(j = 1; j <= A_n; j++){
             nuc = A[j - 1];
-            
+
             switch(nuc) {
               case 'C': x = 0; break;
               case 'T': x = 1; break;
               case 'A': x = 2; break;
               case 'G': x = 3;
             }
-            
+
             nuc = B[i - 1];
-            
+
             switch(nuc) {
                 case 'C': y = 0; break;
                 case 'T': y = 1; break;
                 case 'A': y = 2; break;
                 case 'G': y = 3;
             }
-             
+
              scU = M[i-1][j] - gap_affinity(gap, gap_ext, length); // obtention d'un score si la trace augmente
              scD = M[i-1][j-1] + s[x][y]; // obtention d'un score si la trace va en diagonale
              scL = M[i][j-1] - gap_affinity(gap, gap_ext, length); // obtention d'un score si la trace va a gauche
-             
-             M[i][j] = score_max (scU, scD, scL, &ptr, length) // obtention du score maximum pour l'alignement global optimal actuel
-             
-             M_tb[i][j] = ptr;          
+
+             M[i][j] = score_max (scU, scD, scL, &ptr, length); // obtention du score maximum pour l'alignement global optimal actuel
+
+             M_tb[i][j] = ptr;
        }
-     }                       
+     }
 
      i--;
      j--;
-     
+
      while(i > 0 || j > 0){
          switch(M_tb[i][j]){
              case '|':  A_al += '-';
@@ -117,22 +114,22 @@ int alignement (int** M, char** M_tb, string A, string B, string& A_al, string& 
                          j--;
          }
     }
-  
+
     reverse( A_al.begin(), A_al.end() );
     reverse( B_al.begin(), B_al.end() );
-    
+
     return 0;
 
 }
- 
- // impression de la matrice de notation
+
+// impression de la matrice de notation
  void print_mtx (int** M, string A, string B, int A_n, int B_n) {
       cout <<"   ";
       for(int j = 0; j < A_n; j++) {
-          cout << A[j] << "   ";    
+          cout << A[j] << "   ";
    }
    cout << "\n ";
-   
+
    for( int i = 0; i <= B_n; i++) {
         if(i > 0){
              cout << B[i-1] << "";
@@ -144,9 +141,9 @@ int alignement (int** M, char** M_tb, string A, string B, string& A_al, string& 
         cout << endl;
    }
    cout << endl;
- 
+
  }
- 
+
  // impression de la matrice de tracage
  void print_tb (char** M_tb, string A, string B, int A_n, int B_n) {
       cout << "   ";
@@ -154,7 +151,7 @@ int alignement (int** M, char** M_tb, string A, string B, string& A_al, string& 
               cout << A[j] <<"  ";
       }
       cout << "\n ";
-      
+
       for(int i = 0; i <= B_n; i++) {
               if(i > 0) {
                    cout << B[i-1] << "";
@@ -175,30 +172,30 @@ int** NW(string A, string B, string& A_al, string B_al, int A_n, int B_n, int a,
       for(int i = 0; i <= B_n; i++) {
               M[i] = new int [A_n+1];
       }
-      
+
       // creation de la matrice de tracage
       char** M_tb = new char* [B_n+1];
       for( int i = 0; i <= B_n; i++) {
-           M_tb[i] new char [A_n+1];
+           M_tb[i] = new char [A_n+1];
       }
-      
+
       clock_t t; // pour le temp d'execution
-      t = clock; // obtention de l'heure de depart
-      
+      t = clock(); // obtention de l'heure de depart
+
       // initialisation de la matrice de tracage et la matrice F, remplir la premiere ligne te la premiere colonne
-      int (M, M_tb, A_n, B_n, gap, gap_ext);
-      
+      init (M, M_tb, A_n, B_n, gap, gap_ext);
+
       //creation de l'alignement
-      alignement(M, M_tb, A, B, A_al, A_n, B_n, a, b, c, gap, gap_ext);
-      
+      alignement(M, M_tb, A, B, A_al, B_al, A_n, B_n, a, b, c, gap,  gap_ext);
+
       t = clock() - t; // obtention du temps lorsque cela se termine
       int score = M[B_n][A_n]; // obtention de l'alignement du score
-      
+
       if(print_mat == 1){
                    print_mtx(M, A, B, A_n, B_n);
                    print_tb(M_tb, A, B, A_n, B_n);
       }
-      
+
       if(print_align == 1){
            cout << endl << "Alignements:" << endl;
            int start = 0; // debut de la nouvelle ligne pour la sortie de l'alignement
@@ -221,19 +218,19 @@ int** NW(string A, string B, string& A_al, string B_al, int A_n, int B_n, int a,
                           break;
                     }
                }
-               cout << "" << cntr << endl <<;
+               cout << "" << cntr << endl << endl;
                start += align_nuc;
-               
+
            } while(start <= Al_n);
       }
-      
+
       // score et duree d'execution
       cout << "Alignement score: " << score << endl;
-      cout << "Alignment took: " << t << "clicks(" << (t)/CLOCKS_PER_SEC << "seconds).\n"
-      
+      cout << "Alignment took: " << t << "clicks(" << (t)/CLOCKS_PER_SEC << "seconds).\n";
+
       // exportation de l'alignement vers un fichier
       cout << "Exportation des resultats..." << endl;
-      ofstrean myfile;
+      ofstream myfile;
       myfile.open("alignement.txt");
       myfile << "Parametre utilise:\n";
       myfile << "Match = " << a << "\n";
@@ -270,7 +267,7 @@ int** NW(string A, string B, string& A_al, string B_al, int A_n, int B_n, int a,
            }while(start <= Al_n);
            myfile << "Alignment score: " << score << "\n";
            myfile.close();
-           
+
       // Exportation de la matrice de score dans le fichier
       myfile.open ("mtx_scoring.txt");
       myfile << "-\t-\t";
@@ -319,14 +316,10 @@ int** NW(string A, string B, string& A_al, string B_al, int A_n, int B_n, int a,
     delete[] M_tb;
 
     return 0;
-      
+
 }
 
-
-
-
-
-int main(int argc, char *argv[])
+int main()
 {
     string A, B; // alignement de la sequence A et B
     string A_al, B_al = ""; // aligned sequence A and B
@@ -377,6 +370,8 @@ int main(int argc, char *argv[])
     cout << "Purine/purine or pyrimidine/pyrimidine = " << b << endl;
     cout << "Gap = -" << gap << endl;
     cout << "Extended gap = -" << gap_ext << endl;
+
+    cin.get();
 
     return 0;
 }

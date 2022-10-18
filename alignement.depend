@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1666061820 source:c:\users\algor foka\desktop\tp_inf4017\alignement_global\alignement\main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	<cmath>
+	<algorithm>
+	<time.h>
+
